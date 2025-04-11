@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Login e Registo</title>
+<style>
+body {
+	font-family: sans-serif;
+	background: #f2f2f2;
+	display: flex;
+	justify-content: center;
+	padding: 50px;
+}
+
+.container {
+	display: flex;
+	gap: 40px;
+	background: white;
+	padding: 40px;
+	border-radius: 10px;
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.form-box {
+	width: 300px;
+}
+
+h2 {
+	color: #2c3e50;
+	margin-bottom: 20px;
+}
+
+label {
+	display: block;
+	margin-top: 10px;
+	font-weight: bold;
+}
+
+input {
+	width: 100%;
+	padding: 6px;
+	margin-top: 4px;
+	border-radius: 4px;
+	border: 1px solid #ccc;
+}
+
+button {
+	margin-top: 15px;
+	width: 100%;
+	padding: 10px;
+	background: #3498db;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+button:hover {
+	background: #2980b9;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+
+		<!-- Login -->
+		<div class="form-box">
+			<h2>Login</h2>
+			<label>Username:</label> <input type="text" id="loginUsername">
+			<label>Password:</label> <input type="password" id="loginPassword">
+			<button onclick="login()">Entrar</button>
+		</div>
+
+		<!-- Register -->
+		<div class="form-box">
+			<h2>Registo</h2>
+			<label>Username:</label> <input type="text" id="regUsername">
+			<label>Password:</label> <input type="password" id="regPassword">
+			<label>Confirmar Password:</label> <input type="password"
+				id="regConfirm"> <label>Email:</label> <input type="email"
+				id="regEmail"> <label>Nome:</label> <input type="text"
+				id="regName"> <label>Telemóvel (+351...):</label> <input
+				type="text" id="regPhone"> <label>Tipo de Perfil:</label> <input
+				type="text" id="regProfile" placeholder="publico ou privado">
+			<label>NIF:</label> <input type="text" id="regNIF"> <label>Empregador:</label>
+			<input type="text" id="regEmployer"> <label>Função:</label> <input
+				type="text" id="regJob"> <label>Morada:</label> <input
+				type="text" id="regAddress"> <label>CC (Cartão de
+				Cidadão):</label> <input type="text" id="regCC"> <label>Role:</label>
+			<select id="regRole">
+				<option value="">(sem role)</option>
+				<option value="ENDUSER">ENDUSER</option>
+				<option value="PARTNER">PARTNER</option>
+				<option value="BACKOFFICE">BACKOFFICE</option>
+				<option value="ADMIN">ADMIN</option>
+			</select> <label>Estado da Conta:</label> <select id="regState">
+				<option value="">(automático)</option>
+				<option value="ATIVADA">ATIVADA</option>
+				<option value="DESATIVADA">DESATIVADA</option>
+				<option value="SUSPENSA">SUSPENSA</option>
+			</select>
+
+			<button onclick="register()">Registar</button>
+		</div>
+	</div>
+
+	<script>
+  	async function login() {
+	  const username = document.getElementById('loginUsername').value;
+	  const password = document.getElementById('loginPassword').value;
+
+	  const response = await fetch('/rest/login/v1', {
+	    method: 'POST',
+	    headers: { 'Content-Type': 'application/json' },
+	    body: JSON.stringify({ username, password })
+	  });
+
+	  if (!response.ok) {
+	    alert("Login falhou!");
+	    return;
+	  }
+
+	  const token = await response.json();
+
+	  // Guarda token no localStorage
+	  localStorage.setItem("authToken", JSON.stringify(token));
+
+	  // Redireciona para a página principal
+	  window.location.href = "controlo.html";
+	}
+
+
+  	async function register() {
+  	  const extraData = {
+  	    nif: document.getElementById('regNIF').value || null,
+  	    employer: document.getElementById('regEmployer').value || null,
+  	    job: document.getElementById('regJob').value || null,
+  	    address: document.getElementById('regAddress').value || null,
+  	    citizenCardNumber: document.getElementById('regCC').value || null,
+  	    employerNif: null,
+  	    accountState: document.getElementById('regState').value || null
+  	  };
+
+  	  // remove todos os campos vazios de extraData
+  	  const isExtraDataEmpty = Object.values(extraData).every(val => val === null);
+
+  	  const data = {
+  	    username: document.getElementById('regUsername').value,
+  	    password: document.getElementById('regPassword').value,
+  	    confirmation: document.getElementById('regConfirm').value,
+  	    email: document.getElementById('regEmail').value,
+  	    name: document.getElementById('regName').value,
+  	    phoneNumber: document.getElementById('regPhone').value,
+  	    profileType: document.getElementById('regProfile').value,
+  	    extraData: isExtraDataEmpty ? null : extraData
+  	  };
+
+  	  const response = await fetch('/rest/register/v1', {
+  	    method: 'POST',
+  	    headers: { 'Content-Type': 'application/json' },
+  	    body: JSON.stringify(data)
+  	  });
+
+  	  if (response.ok) {
+  	    alert("Registo efetuado com sucesso!");
+  	  } else {
+  	    const msg = await response.text();
+  	    alert("Erro no registo: " + msg);
+  	  }
+  	}
+
+  </script>
+</body>
+</html>

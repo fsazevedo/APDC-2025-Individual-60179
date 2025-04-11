@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Painel de Controlo</title>
+<style>
+body {
+	font-family: sans-serif;
+	background: #f9f9f9;
+	padding: 30px;
+}
+
+h1 {
+	color: #2c3e50;
+}
+
+.section {
+	background: white;
+	padding: 20px;
+	margin-top: 20px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+	display: block;
+	margin-top: 10px;
+	font-weight: bold;
+}
+
+input, select {
+	width: 100%;
+	padding: 6px;
+	margin-top: 4px;
+	border-radius: 4px;
+	border: 1px solid #ccc;
+}
+
+button {
+	margin-top: 10px;
+	padding: 10px 20px;
+	background: #3498db;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+button:hover {
+	background: #2980b9;
+}
+
+pre {
+	background: #eee;
+	padding: 10px;
+	border-radius: 6px;
+	overflow: auto;
+}
+</style>
+</head>
+<body>
+	<h1>Painel de Controlo</h1>
+	<div class="section">
+		<h3>Token Atual</h3>
+		<pre id="tokenDisplay"></pre>
+	</div>
+
+	<div class="section">
+		<h3>OP3 - Mudar Role</h3>
+		<label>Utilizador alvo:</label> <input type="text" id="roleTarget">
+		<label>Novo Role:</label> <select id="newRole">
+			<option value="ENDUSER">ENDUSER</option>
+			<option value="PARTNER">PARTNER</option>
+			<option value="BACKOFFICE">BACKOFFICE</option>
+			<option value="ADMIN">ADMIN</option>
+		</select>
+		<button onclick="changeRole()">Alterar Role</button>
+	</div>
+
+	<div class="section">
+		<h3>OP4 - Mudar Estado de Conta</h3>
+		<label>Utilizador alvo:</label> <input type="text" id="stateTarget">
+		<label>Novo Estado:</label> <select id="newState">
+			<option value="ATIVADA">ATIVADA</option>
+			<option value="DESATIVADA">DESATIVADA</option>
+			<option value="SUSPENSA">SUSPENSA</option>
+		</select>
+		<button onclick="changeState()">Alterar Estado</button>
+	</div>
+
+	<div class="section">
+		<h3>OP5 - Remover Utilizador</h3>
+		<label>Utilizador a remover:</label> <input type="text"
+			id="removeTarget">
+		<button onclick="removeUser()">Remover</button>
+	</div>
+
+	<div class="section">
+		<h3>OP6 - Listar Utilizadores</h3>
+		<button onclick="listUsers()">Listar</button>
+		<pre id="listOutput"></pre>
+	</div>
+
+<div class="section">
+  <h3>OP7 - Alterar Atributos da Conta</h3>
+  <label>Selecionar utilizador:</label>
+  <input type="text" id="editUsername">
+  <button onclick="loadUserAttributes()">Carregar Atributos</button>
+
+  <div id="attributeForm" style="display:none; margin-top:20px">
+  
+    <label>Nome:</label> <input type="text" id="editName">
+    <label>Novo Username:</label> <input type="text" id="editNewUsername">
+	<label>Alterar Email:</label> <input type="email" id="editEmail">
+    <label>Telemóvel:</label> <input type="text" id="editPhone">
+    <label>Morada:</label> <input type="text" id="editAddress">
+    <label>Emprego:</label> <input type="text" id="editJob">
+    <label>Empregador:</label> <input type="text" id="editEmployer">
+    <label>NIF Empregador:</label> <input type="text" id="editEmployerNif">
+    <label>NIF:</label> <input type="text" id="editNif">
+    <label>Tipo de Perfil:</label>
+    <select id="editProfile">
+      <option value="">(nenhum)</option>
+      <option value="publico">publico</option>
+      <option value="privado">privado</option>
+    </select>
+    <label>Role:</label>
+    <select id="editRole">
+      <option value="">(sem alteração)</option>
+      <option value="ENDUSER">ENDUSER</option>
+      <option value="PARTNER">PARTNER</option>
+      <option value="BACKOFFICE">BACKOFFICE</option>
+      <option value="ADMIN">ADMIN</option>
+    </select>
+    <label>Estado da Conta:</label>
+    <select id="editState">
+      <option value="">(sem alteração)</option>
+      <option value="ATIVO">ATIVO</option>
+      <option value="DESATIVADO">DESATIVADO</option>
+      <option value="SUSPENSO">SUSPENSO</option>
+    </select>
+    <button onclick="submitAttributeChanges()">Guardar Alteracoes</button>
+  </div>
+</div>
+
+	<div class="section">
+		<h3>OP8 - Mudar Password</h3>
+		<label>Password atual:</label> <input type="password"
+			id="oldPassword"> <label>Nova password:</label> <input
+			type="password" id="newPassword"> <label>Confirmar
+			nova password:</label> <input type="password" id="confirmPassword">
+		<button onclick="changePassword()">Mudar Password</button>
+	</div>
+
+	<div class="section">
+		<h3>OP9 - Logout</h3>
+		<button onclick="logout()">Logout</button>
+	</div>
+
+<!-- Bloco HTML OP10: Registar/Modificar Folhas de Obra -->
+	<div class="section">
+	  <h3>OP10 - Criar/Modificar Folha de Obra</h3>
+	  <label>Referência:</label> <input type="text" id="obraRef">
+	  <label>Descrição:</label> <input type="text" id="obraDescricao">
+	  <label>Tipo de Alvo:</label>
+	  <select id="obraTipo">
+	    <option value="">(selecione)</option>
+	    <option value="Propriedade Pública">Propriedade Pública</option>
+	    <option value="Propriedade Privada">Propriedade Privada</option>
+	  </select>
+	  <label>Estado de Adjudicação:</label>
+	  <select id="obraEstadoAdj" onchange="toggleAdjudicacaoFields()">
+	    <option value="">(selecione)</option>
+	    <option value="ADJUDICADO">ADJUDICADO</option>
+	    <option value="NÃO ADJUDICADO">NÃO ADJUDICADO</option>
+	  </select>
+	
+	  <!-- Campos adicionais visíveis apenas se ADJUDICADO -->
+	  <div id="adjudicacaoFields" style="display:none; margin-top: 10px">
+	    <label>Data de Adjudicação:</label> <input type="date" id="dataAdjudicacao">
+	    <label>Data Início Prevista:</label> <input type="date" id="dataInicio">
+	    <label>Data Conclusão Prevista:</label> <input type="date" id="dataConclusao">
+	    <label>Entidade Adjudicada:</label> <input type="text" id="entidadeAdj">
+	    <label>NIF da Empresa:</label> <input type="text" id="nifEmpresa">
+	    <label>Conta de Entidade (partnerId):</label> <input type="text" id="partnerId">
+	  </div>
+	
+	  <button onclick="createWorksheet()">Registar Folha de Obra</button>
+	</div>
+	
+	<script>
+    const token = JSON.parse(localStorage.getItem("authToken"));
+    document.getElementById("tokenDisplay").textContent = JSON.stringify(token, null, 2);
+    
+    async function changeRole() {
+    	  const body = {
+    	    username: document.getElementById("roleTarget").value,
+    	    newRole: document.getElementById("newRole").value
+    	  };
+
+    	  const res = await fetch("/rest/changerole/v1", {
+    	    method: "POST",
+    	    headers: {
+    	      "Content-Type": "application/json",
+    	      "Authorization": JSON.stringify(token)
+    	    },
+    	    body: JSON.stringify(body)
+    	  });
+
+    	  alert(await res.text());
+    	}
+
+
+    async function changeState() {
+    	  const body = {
+    	    username: document.getElementById("stateTarget").value,
+    	    newState: document.getElementById("newState").value
+    	  };
+
+    	  const res = await fetch("/rest/changeaccountstate/v1", {
+    	    method: "POST",
+    	    headers: {
+    	      "Content-Type": "application/json",
+    	      "Authorization": JSON.stringify(token)
+    	    },
+    	    body: JSON.stringify(body)
+    	  });
+
+    	  alert(await res.text());
+    	}
+
+
+    async function removeUser() {
+    	  const token = localStorage.getItem("authToken"); 
+
+    	  if (!token) {
+    	    alert("Sem token de autenticação.");
+    	    return;
+    	  }
+
+    	  const body = {
+    	    identifier: document.getElementById("removeTarget").value
+    	  };
+
+    	  const res = await fetch("/rest/removeuser/v1", {
+    	    method: "POST",
+    	    headers: {
+    	      "Content-Type": "application/json",
+    	      "Authorization": token
+    	    },
+    	    body: JSON.stringify(body)
+    	  });
+
+    	  alert(await res.text());
+    	}
+    async function listUsers() {
+    	  const res = await fetch("/rest/listusers/v1", {
+    	    method: "POST",
+    	    headers: {
+    	      "Content-Type": "application/json",
+    	      "Authorization": JSON.stringify(token)
+    	    }
+    	  });
+    	  const users = await res.json();
+    	  document.getElementById("listOutput").textContent = JSON.stringify(users, null, 2);
+    	}
+
+    async function loadUserAttributes() {
+    	  const username = document.getElementById("editUsername").value;
+    	  const res = await fetch("/rest/listusers/v1", {
+    	    method: "POST",
+    	    headers: {
+    	      "Content-Type": "application/json",
+    	      "Authorization": JSON.stringify(token)
+    	    }
+    	  });
+    	  const users = await res.json();
+    	  const user = users.find(u => u.username === username);
+    	  if (!user) {
+    	    alert("Utilizador não encontrado.");
+    	    return;
+    	  }
+    	  
+    	  document.getElementById("editName").value = user.user_name || "";
+    	  document.getElementById("editNewUsername").value || "";
+    	  document.getElementById("editEmail").value || "";
+    	  document.getElementById("editPhone").value = user.user_phone || "";
+    	  document.getElementById("editAddress").value = user.user_address || "";
+    	  document.getElementById("editJob").value = user.user_job || "";
+    	  document.getElementById("editEmployer").value = user.user_employer || "";
+    	  document.getElementById("editEmployerNif").value = user.user_employer_nif || "";
+    	  document.getElementById("editNif").value = user.user_nif || "";
+    	  document.getElementById("editProfile").value = user.profile_type || "";
+    	  document.getElementById("editRole").value = user.user_role || "";
+    	  document.getElementById("editState").value = user.user_account_state || "";
+    	  document.getElementById("attributeForm").style.display = "block";
+    	}
+
+    	async function submitAttributeChanges() {
+   		const body = {
+   				  targetUsername: document.getElementById("editUsername").value,
+   				  newUsername: document.getElementById("editNewUsername").value || null,
+   				  email: document.getElementById("editEmail").value || null,
+   				  name: document.getElementById("editName").value || null,
+   				  phoneNumber: document.getElementById("editPhone").value || null,
+   				  address: document.getElementById("editAddress").value || null,
+   				  job: document.getElementById("editJob").value || null,
+   				  employer: document.getElementById("editEmployer").value || null,
+   				  employerNif: document.getElementById("editEmployerNif").value || null,
+   				  nif: document.getElementById("editNif").value || null,
+   				  profileType: document.getElementById("editProfile").value || null,
+   				  role: document.getElementById("editRole").value || null,
+   				  accountState: document.getElementById("editState").value || null
+   				};
+    	  const res = await fetch("/rest/changeattributes/v1", {
+    	    method: "POST",
+    	    headers: {
+    	      "Content-Type": "application/json",
+    	      "Authorization": JSON.stringify(token)
+    	    },
+    	    body: JSON.stringify(body)
+    	  });
+    	  alert(await res.text());
+    	}
+
+    	async function changePassword() {
+    		  const body = {
+    		    oldPassword: document.getElementById("oldPassword").value,
+    		    newPassword: document.getElementById("newPassword").value,
+    		    confirmNewPassword: document.getElementById("confirmPassword").value
+    		  };
+
+    		  const res = await fetch("/rest/changepassword/v1", {
+    		    method: "POST",
+    		    headers: {"Content-Type": "application/json", "Authorization": JSON.stringify(token)},
+    		    body: JSON.stringify(body)
+    		  });
+
+    		  alert(await res.text());
+    		}
+
+    async function logout() {
+      const res = await fetch("/rest/logout/v1", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" , "Authorization": JSON.stringify(token)},
+        body: JSON.stringify({ token: token })
+      });
+      localStorage.removeItem("authToken");
+      alert("Sessão terminada.");
+      window.location.href = "index.html";
+    }
+
+    function toggleAdjudicacaoFields() {
+      const estado = document.getElementById("obraEstadoAdj").value;
+      const extra = document.getElementById("adjudicacaoFields");
+      extra.style.display = estado === "ADJUDICADO" ? "block" : "none";
+    }
+
+    async function createWorksheet() {
+      const estadoAdj = document.getElementById("obraEstadoAdj").value;
+
+      const body = {
+        reference: document.getElementById("obraRef").value,
+        descricao: document.getElementById("obraDescricao").value,
+        tipoAlvo: document.getElementById("obraTipo").value,
+        estadoAdjudicacao: estadoAdj
+      };
+
+      if (estadoAdj === "ADJUDICADO") {
+        body.dataAdjudicacao = document.getElementById("dataAdjudicacao").value;
+        body.dataInicioPrevista = document.getElementById("dataInicio").value;
+        body.dataConclusaoPrevista = document.getElementById("dataConclusao").value;
+        body.entidadeAdjudicada = document.getElementById("entidadeAdj").value;
+        body.nifEmpresa = document.getElementById("nifEmpresa").value;
+        body.partnerId = document.getElementById("partnerId").value;
+      }
+
+      const res = await fetch("/rest/worksheets/v1", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": JSON.stringify(token)
+        },
+        body: JSON.stringify(body)
+      });
+
+      alert(await res.text());
+    }
+  </script>
+</body>
+</html>
