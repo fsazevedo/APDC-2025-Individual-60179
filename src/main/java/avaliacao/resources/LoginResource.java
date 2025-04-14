@@ -51,6 +51,19 @@ public class LoginResource {
 	    Key userKey = userKeyFactory.newKey(data.username);
 
 	    Entity user = datastore.get(userKey);
+	    
+	    if (user == null) {
+	        var query = com.google.cloud.datastore.StructuredQuery
+	                .newEntityQueryBuilder()
+	                .setKind("User")
+	                .setFilter(com.google.cloud.datastore.StructuredQuery.PropertyFilter.eq("user_email", data.username))
+	                .build();
+	        var results = datastore.run(query);
+	        if (results.hasNext()) {
+	            user = results.next();
+	        }
+	    }
+
 	    if (user != null) {
 	        String hashedPWD = user.getString("user_pwd");
 	        if (hashedPWD.equals(DigestUtils.sha512Hex(data.password))) {

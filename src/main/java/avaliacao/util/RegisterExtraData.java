@@ -45,7 +45,7 @@ public class RegisterExtraData {
         return (nonEmptyOrBlankField(role) && isValidRole(role)) ||
                (nonEmptyOrBlankField(nif) && isValidNIF(nif)) ||
                (nonEmptyOrBlankField(employerNif) && isValidNIF(employerNif)) ||
-               (nonEmptyOrBlankField(citizenCardNumber) && citizenCardNumber.matches("\\d{8,9}")) ||
+               (nonEmptyOrBlankField(citizenCardNumber) && citizenCardNumber.matches("\\d{9}")) ||
                (nonEmptyOrBlankField(employer)) ||
                (nonEmptyOrBlankField(job)) ||
                (nonEmptyOrBlankField(address)) ||
