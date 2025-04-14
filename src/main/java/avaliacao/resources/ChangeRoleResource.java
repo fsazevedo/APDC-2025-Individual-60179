@@ -12,11 +12,18 @@ import com.google.gson.Gson;
 
 @Path("/changerole")
 public class ChangeRoleResource {
+	
+    private static final String ENDUSER = "ENDUSER";
+    private static final String BACKOFFICE = "BACKOFFICE";
+    private static final String ADMIN = "ADMIN";
+    private static final String PARTNER = "PARTNER";
 
     private static final Logger LOG = Logger.getLogger(ChangeRoleResource.class.getName());
     private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
     private static final KeyFactory keyFactory = datastore.newKeyFactory().setKind("User");
     private final Gson g = new Gson();
+    
+    
 
     @POST
     @Path("/v1")
@@ -41,8 +48,14 @@ public class ChangeRoleResource {
                 return Response.status(Response.Status.FORBIDDEN).entity("Utilizador autenticado não encontrado").build();
             }
 
-            String requesterRole = requester.contains("user_role") ? requester.getString("user_role") : "UNKNOWN";
- 
+            if (!requester.contains("user_role")) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                               .entity("A conta do utilizador autenticado não tem role definido.")
+                               .build();
+            }
+
+            String requesterRole = requester.getString("user_role"); 
+            
             if (data.username == null || data.newRole == null) {
                 return Response.status(Response.Status.BAD_REQUEST).entity("Campos username ou newRole em falta").build();
             }
@@ -53,10 +66,16 @@ public class ChangeRoleResource {
                 return Response.status(Response.Status.BAD_REQUEST).entity("Utilizador alvo não existe").build();
             }
 
-            String currentRole = target.contains("user_role") ? target.getString("user_role") : "UNKNOWN";
+            if (!target.contains("user_role")) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                               .entity("Utilizador alvo não tem role definido.")
+                               .build();
+            }
+
+            String currentRole = target.getString("user_role");
             String newRole = data.newRole.toUpperCase();
-            if (!newRole.equals("ENDUSER") && !newRole.equals("PARTNER") &&
-            	    !newRole.equals("BACKOFFICE") && !newRole.equals("ADMIN")) {
+            if (!newRole.equals(ENDUSER) && !newRole.equals(PARTNER) &&
+            	    !newRole.equals(BACKOFFICE) && !newRole.equals(ADMIN)) {
             	    return Response.status(Response.Status.BAD_REQUEST).entity("Role inválido: " + newRole).build();
             	}
 
@@ -64,8 +83,8 @@ public class ChangeRoleResource {
             if (requesterRole.equals("ADMIN")) {
                 // Pode tudo
             } else if (requesterRole.equals("BACKOFFICE")) {
-                boolean validChange = (currentRole.equals("ENDUSER") && newRole.equals("PARTNER")) ||
-                                      (currentRole.equals("PARTNER") && newRole.equals("ENDUSER"));
+                boolean validChange = (currentRole.equals(ENDUSER) && newRole.equals(PARTNER)) ||
+                                      (currentRole.equals(PARTNER) && newRole.equals(ENDUSER));
                 if (!validChange) {
                     return Response.status(Response.Status.FORBIDDEN)
                             .entity("BACKOFFICE só pode alterar entre ENDUSER e PARTNER")

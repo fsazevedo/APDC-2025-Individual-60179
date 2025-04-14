@@ -1,9 +1,5 @@
 package avaliacao.resources;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -33,9 +29,6 @@ import avaliacao.util.LoginData;
 public class LoginResource {
 	
 	private static final String MESSAGE_INVALID_CREDENTIALS = "Incorrect username or password.";
-	private static final String MESSAGE_NEXT_PARAMETER_INVALID = "Request parameter 'next' must be greater or equal to 0.";
-
-	private static final String LOG_MESSAGE_LOGIN_ATTEMP = "Login attempt by user: ";
 	private static final String LOG_MESSAGE_LOGIN_SUCCESSFUL = "Login successful by user: ";
 	private static final String LOG_MESSAGE_WRONG_PASSWORD = "Wrong password for: ";
 	private static final String LOG_MESSAGE_UNKNOW_USER = "Failed login attempt for username: ";

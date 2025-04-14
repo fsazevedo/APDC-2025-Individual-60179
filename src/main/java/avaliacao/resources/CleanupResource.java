@@ -7,6 +7,8 @@ import com.google.cloud.datastore.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 
+
+//esta classe serve para limpar a base de dados de todos os users, nao e necessaria no projeto
 @Path("/cleanup")
 public class CleanupResource {
 

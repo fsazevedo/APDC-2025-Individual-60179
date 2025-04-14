@@ -15,6 +15,12 @@ import com.google.gson.Gson;
 
 @Path("/removeuser")
 public class RemoveUserAccountResource {
+	
+    private static final String ENDUSER = "ENDUSER";
+    private static final String BACKOFFICE = "BACKOFFICE";
+    private static final String ADMIN = "ADMIN";
+    private static final String PARTNER = "PARTNER";
+    
 
     private static final Logger LOG = Logger.getLogger(RemoveUserAccountResource.class.getName());
     private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
@@ -50,7 +56,12 @@ public class RemoveUserAccountResource {
                 return Response.status(Response.Status.FORBIDDEN).entity("Utilizador autenticado não existe").build();
             }
 
-            String requesterRole = requester.contains("user_role") ? requester.getString("user_role") : "UNKNOWN";
+            if (!requester.contains("user_role")) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity("O utilizador autenticado não tem role definido.").build();
+            }
+
+            String requesterRole = requester.getString("user_role");
 
             Key targetKey = null;
             Entity target = null;
@@ -86,12 +97,17 @@ public class RemoveUserAccountResource {
                 }
             }
 
-            String targetRole = target.contains("user_role") ? target.getString("user_role") : "UNKNOWN";
+            if (!target.contains("user_role")) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("Utilizador alvo não tem role definido.").build();
+            }
+
+            String targetRole = target.getString("user_role");
 
             if (requesterRole.equals("ADMIN")) {
                 // Tudo ok
-            } else if (requesterRole.equals("BACKOFFICE")) {
-                if (!targetRole.equals("ENDUSER") && !targetRole.equals("PARTNER")) {
+            } else if (requesterRole.equals(BACKOFFICE)) {
+                if (!targetRole.equals("ENDUSER") && !targetRole.equals(PARTNER)) {
                     return Response.status(Response.Status.FORBIDDEN)
                             .entity("BACKOFFICE só pode remover contas com role ENDUSER ou PARTNER.")
                             .build();

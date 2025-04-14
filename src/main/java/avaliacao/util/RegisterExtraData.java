@@ -3,12 +3,19 @@ package avaliacao.util;
 import com.google.cloud.datastore.Entity;
 
 public class RegisterExtraData {
+    // Constantes de roles
 
     private static final String ENDUSER = "ENDUSER";
     private static final String BACKOFFICE = "BACKOFFICE";
     private static final String ADMIN = "ADMIN";
     private static final String PARTNER = "PARTNER";
+    
+    // Constantes de estados
+    private static final String STATE_ATIVADA = "ATIVADA";
+    private static final String STATE_DESATIVADA = "DESATIVADA";
+    private static final String STATE_SUSPENSA = "SUSPENSA";
 
+    
     public String citizenCardNumber;
     public String role;
     public String nif;
@@ -86,7 +93,7 @@ public class RegisterExtraData {
         if (nonEmptyOrBlankField(accountState)) {
             userBuilder.set("user_account_state", accountState);
         }else {
-            userBuilder.set("user_account_state", "ATIVADA");
+            userBuilder.set("user_account_state", STATE_ATIVADA);
         }
     }
 }

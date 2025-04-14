@@ -1,7 +1,6 @@
 package avaliacao.resources;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 import com.google.cloud.datastore.*;
 
@@ -14,14 +13,13 @@ import com.google.gson.JsonObject;
 @Path("/listusers")
 public class ListUsersResource {
 
-    private static final Logger LOG = Logger.getLogger(ListUsersResource.class.getName());
     private static final Datastore datastore = DatastoreOptions.getDefaultInstance().getService();
     private static final Gson g = new Gson();
 
     private static final String[] expectedFields = {
        "user_name", "user_email", "user_role", "user_account_state", "profile_type",
         "user_creation_time", "user_login_time", "user_employer", "user_employer_nif",
-        "user_job", "user_address", "user_nif", "user_pwd"
+        "user_job", "user_address", "user_nif"
     };
 
     @POST

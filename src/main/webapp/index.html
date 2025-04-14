@@ -75,35 +75,47 @@ button:hover {
 		<!-- Register -->
 		<div class="form-box">
 			<h2>Registo</h2>
-			<label>Username:</label> <input type="text" id="regUsername">
-			<label>Password:</label> <input type="password" id="regPassword">
-			<label>Confirmar Password:</label> <input type="password"
-				id="regConfirm"> <label>Email:</label> <input type="email"
-				id="regEmail"> <label>Nome:</label> <input type="text"
-				id="regName"> <label>Telemóvel (+351...):</label> <input
-				type="text" id="regPhone"> <label>Tipo de Perfil:</label> <input
-				type="text" id="regProfile" placeholder="publico ou privado">
-			<label>NIF:</label> <input type="text" id="regNIF"> <label>Empregador:</label>
-			<input type="text" id="regEmployer"> <label>Função:</label> <input
-				type="text" id="regJob"> <label>Morada:</label> <input
-				type="text" id="regAddress"> <label>CC (Cartão de
-				Cidadão):</label> <input type="text" id="regCC"> <label>Role:</label>
-			<select id="regRole">
-				<option value="">(sem role)</option>
-				<option value="ENDUSER">ENDUSER</option>
-				<option value="PARTNER">PARTNER</option>
-				<option value="BACKOFFICE">BACKOFFICE</option>
-				<option value="ADMIN">ADMIN</option>
-			</select> <label>Estado da Conta:</label> <select id="regState">
-				<option value="">(automático)</option>
-				<option value="ATIVADA">ATIVADA</option>
-				<option value="DESATIVADA">DESATIVADA</option>
-				<option value="SUSPENSA">SUSPENSA</option>
-			</select>
-
+			<label>Username:</label>
+			<input type="text" id="regUsername">
+		
+			<label>Password:</label>
+			<input type="password" id="regPassword">
+		
+			<label>Confirmar Password:</label>
+			<input type="password" id="regConfirm">
+		
+			<label>Email:</label>
+			<input type="email" id="regEmail">
+		
+			<label>Nome:</label>
+			<input type="text" id="regName">
+		
+			<label>Telemóvel (+351...):</label>
+			<input type="text" id="regPhone">
+			
+			<label>Tipo de Perfil:</label>
+			<input type="text" id="regProfile" placeholder="publico ou privado">
+		
+			<label>NIF:</label>
+			<input type="text" id="regNIF">
+		
+			<label>Empregador:</label>
+			<input type="text" id="regEmployer">
+		
+			<label>NIF do Empregador:</label>
+			<input type="text" id="regEmployerNIF">
+		
+			<label>Função:</label>
+			<input type="text" id="regJob">
+		
+			<label>Morada:</label>
+			<input type="text" id="regAddress">
+		
+			<label>CC (Cartão de Cidadão):</label>
+			<input type="text" id="regCC">
+		
 			<button onclick="register()">Registar</button>
 		</div>
-	</div>
 
 	<script>
   	async function login() {
@@ -138,8 +150,7 @@ button:hover {
   	    job: document.getElementById('regJob').value || null,
   	    address: document.getElementById('regAddress').value || null,
   	    citizenCardNumber: document.getElementById('regCC').value || null,
-  	    employerNif: null,
-  	    accountState: document.getElementById('regState').value || null
+  	    employerNif: document.getElementById('regEmployerNIF').value || null
   	  };
 
   	  // remove todos os campos vazios de extraData

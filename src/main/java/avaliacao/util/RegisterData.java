@@ -51,7 +51,7 @@ public class RegisterData {
                validPhoneNumber(phoneNumber) &&     // Phone number check
                validProfileType(profileType) &&     // Profile type check
                password.equals(confirmation) &&     // Password confirmation check
-               (extraData == null || extraData.validOptionalFields()); // Validate optional fields if provided
+               (extraData == null || extraData.validOptionalFields()); // Validate fields if provided
     }
 
     private boolean validProfileType(String profileType) {
