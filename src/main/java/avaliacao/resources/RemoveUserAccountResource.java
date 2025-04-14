@@ -33,19 +33,12 @@ public class RemoveUserAccountResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeUser(@Context HttpHeaders headers, RemoveUserData data) {
         try {
-        	String auth = headers.getHeaderString("Authorization");
-        	if (auth == null || auth.isBlank()) {
-        	    return Response.status(Response.Status.UNAUTHORIZED).entity("Token em falta").build();
-        	}
+            String auth = headers.getHeaderString("Authorization");
+            if (auth == null || auth.isBlank()) {
+                return Response.status(Response.Status.UNAUTHORIZED).entity("Token em falta").build();
+            }
 
-        	String rawToken = auth.replaceFirst("(?i)^Bearer ", "").trim();
-        	AuthToken token;
-        	try {
-        	    token = new Gson().fromJson(rawToken, AuthToken.class);
-        	} catch (Exception e) {
-        	    return Response.status(Response.Status.BAD_REQUEST).entity("Formato de token inválido.").build();
-        	}
-
+            AuthToken token = g.fromJson(auth, AuthToken.class);
             if (token == null || !token.isValid() || token.isRevoked(datastore)) {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("Token inválido ou sessão terminada").build();
             }
